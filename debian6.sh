@@ -18,7 +18,7 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 service ssh restart
 
 # set repo
-wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/sources.list.debian6"
+wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/sources.list.debian6" --no-check-certificate
 wget "http://www.dotdeb.org/dotdeb.gpg"
 cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
 
@@ -61,24 +61,24 @@ echo "screenfetch" >> .profile
 cd
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/nginx.conf"
+wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/nginx.conf" --no-check-certificate
 mkdir -p /home/vps/public_html
-wget -O /home/vps/public_html/index.html "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/index.html"
+wget -O /home/vps/public_html/index.html "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/index.html" --no-check-certificate
 echo "<?php phpinfo(); ?>" > /home/vps/public_html/info.php
-wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/vps.conf"
+wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/vps.conf" --no-check-certificate
 sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
 service php5-fpm restart
 service nginx restart
 
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/openvpn-debian.tar"
+wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/openvpn-debian.tar" --no-check-certificate
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/1194.conf"
+wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/1194.conf" --no-check-certificate
 service openvpn restart
 sysctl -w net.ipv4.ip_forward=1
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
-wget -O /etc/iptables.up.rules "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/iptables.up.rules"
+wget -O /etc/iptables.up.rules "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/iptables.up.rules" --no-check-certificate
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
 MYIP=`curl -s ifconfig.me`;
 MYIP2="s/xxxxxxxxx/$MYIP/g";
@@ -88,12 +88,12 @@ service openvpn restart
 
 # configure openvpn client config
 cd /etc/openvpn/
-wget -O /etc/openvpn/1194-client.ovpn "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/1194-client.conf"
+wget -O /etc/openvpn/1194-client.ovpn "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/1194-client.conf" --no-check-certificate
 sed -i $MYIP2 /etc/openvpn/1194-client.ovpn;
 PASS=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 15 | head -n 1`;
 useradd -M -s /bin/false KangArie
-echo "KangArie:$PASS" | chpasswd
-echo "KangArie" > pass.txt
+echo "Office48:$PASS" | chpasswd
+echo "Office48" > pass.txt
 echo "$PASS" >> pass.txt
 tar cf client.tar 1194-client.ovpn pass.txt
 cp client.tar /home/vps/public_html/
@@ -109,8 +109,8 @@ cd
 #screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300
 
 # install mrtg
-wget -O /etc/snmp/snmpd.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/snmpd.conf"
-wget -O /root/mrtg-mem.sh "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/mrtg-mem.sh"
+wget -O /etc/snmp/snmpd.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/snmpd.conf" --no-check-certificate
+wget -O /root/mrtg-mem.sh "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/mrtg-mem.sh" --no-check-certificate
 chmod +x /root/mrtg-mem.sh
 cd /etc/snmp/
 sed -i 's/TRAPDRUN=no/TRAPDRUN=yes/g' /etc/default/snmpd
@@ -118,7 +118,7 @@ service snmpd restart
 snmpwalk -v 1 -c public localhost 1.3.6.1.4.1.2021.10.1.3.1
 mkdir -p /home/vps/public_html/mrtg
 cfgmaker --zero-speed 100000000 --global 'WorkDir: /home/vps/public_html/mrtg' --output /etc/mrtg.cfg public@localhost
-curl "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/mrtg.conf" >> /etc/mrtg.cfg
+curl "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/mrtg.conf">> /etc/mrtg.cfg
 sed -i 's/WorkDir: \/var\/www\/mrtg/# WorkDir: \/var\/www\/mrtg/g' /etc/mrtg.cfg
 sed -i 's/# Options\[_\]: growright, bits/Options\[_\]: growright/g' /etc/mrtg.cfg
 indexmaker --output=/home/vps/public_html/mrtg/index.html /etc/mrtg.cfg
@@ -160,7 +160,7 @@ apt-get -y install fail2ban;service fail2ban restart
 
 # install squid
 apt-get -y install squid
-wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/squid.conf"
+wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/squid.conf" --no-check-certificate
 sed -i $MYIP2 /etc/squid/squid.conf;
 service squid restart
 
@@ -176,7 +176,7 @@ service vnstat restart
 # downlaod script
 cd
 wget -O speedtest_cli.py "https://raw.github.com/sivel/speedtest-cli/master/speedtest_cli.py"
-wget -O bench-network.sh "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/bench-network.sh"
+wget -O bench-network.sh "https://raw.githubusercontent.com/Office48/VPSScript/master/conf/bench-network.sh" --no-check-certificate
 wget -O ps_mem.py "https://raw.github.com/pixelb/ps_mem/master/ps_mem.py"
 chmod +x bench-network.sh
 chmod +x speedtest_cli.py
